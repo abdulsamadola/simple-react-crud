@@ -1,2 +1,2 @@
 # simple-crud
-Simple crud
+React simple CRUD 
