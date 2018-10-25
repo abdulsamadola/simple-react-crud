@@ -1,11 +1,35 @@
 import React, { PureComponent } from 'react';
 import { Link } from 'react-router-dom'
-
+import { AsyncStorage } from 'AsyncStorage'
+const USERS_DATA = 'users_data'
 class mainComponent extends PureComponent {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            userData: []
+        }
         this._onClick = this._onClick.bind(this);
+    }
+    async deleteUsers() {
+        try {
+            await AsyncStorage.multiRemove(USERS_DATA)
+            alert(' was successful!');
+        } catch (error) {
+            alert('something went  wrong' + error);
+        }
+    }
+
+    async componentDidMount() {
+        try {
+            const dataRequest = await AsyncStorage.getItem(USERS_DATA)
+            if (dataRequest) {
+                this.setState({
+                    userData: JSON.parse(dataRequest)
+                })
+            }
+        } catch (error) {
+            alert('something wrong')
+        }
     }
     _onClick() {
         this.props.history.push(`/adduser`);
@@ -13,18 +37,21 @@ class mainComponent extends PureComponent {
     render() {
         return (
             <div style={{ padding: 10, flex: 1 }}>
-                <div className="card">
+                <div className="card" style={{ flex: 1 }}>
                     <div className="card-header">
 
 
                         <button type="button" className="btn btn-success m-2" onClick={this._onClick}>
                             Add new user
                         </button>
+                        <button type="button" className="btn btn-danger m-2" onClick={() => { this.deleteUsers() }}>
+                            Delete all users
+                        </button>
                         <button type="button" className="btn btn-primary">
-                            Total <span className="badge badge-light">1</span>
+                            Total <span className="badge badge-light">{this.state.userData.length}</span>
                         </button>
                     </div>
-                    <table class="table table-striped">
+                    <table class="table table-striped" style={{ flex: 1 }}>
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
@@ -35,16 +62,23 @@ class mainComponent extends PureComponent {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Suleiman Abdulsamad Ola</td>
-                                <td>suleimanolamilekan03@gmail.com</td>
-                                <td>08142287687</td>
-                                <td> <button type="button" className="btn btn-primary m-2">Edit</button>
-                                    <button type="button" className="btn btn-danger">Delete</button></td>
-                            </tr>
+                            {this.state.userData.map((user) => (
+                                <tr>
+                                    <th scope="row">{user.id}</th>
+                                    <td>{user.name}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.phoneNumber}</td>
+                                    <td>
+                                        <button type="button" className="btn btn-primary m-2">Edit</button>
+                                        <button type="button" className="btn btn-danger">Delete</button>
+                                    </td>
+                                </tr>
+
+                            ))}
+
 
                         </tbody>
+
                     </table>
                 </div>
             </div>
