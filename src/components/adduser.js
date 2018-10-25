@@ -14,12 +14,15 @@ class mainComponent extends PureComponent {
         });
 
     }
+    _onClick = () => {
+        this.props.history.goBack();
+    }
     render() {
         return (
             <div style={{ padding: 10, flex: 1 }}>
                 <div className="card">
                     <div className="card-header">
-                        <button type="button" className="btn btn-danger">
+                        <button type="button" onClick={this._onClick.bind(this)} className="btn btn-danger">
                             Go back                        </button>
 
                     </div>
