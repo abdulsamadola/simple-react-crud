@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import App from './components/App'
 import serviceWorker from './serviceWorker'
-ReactDOM.render(<BrowserRouter basename="/Home" >
+ReactDOM.render(<BrowserRouter basename={process.env.PUBLIC_URL} >
     <App />
 </BrowserRouter>, document.getElementById('root'));
 
