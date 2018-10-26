@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react';
 import { AsyncStorage } from 'AsyncStorage'
 const USERS_DATA = 'users_data'
-const uuid = require('uuidv4');
 class addUserComponent extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
+            id: this.props.match.params.id,
+            index: '',
             name: '',
             phoneNumber: '',
             email: '',
@@ -13,14 +14,7 @@ class addUserComponent extends PureComponent {
         }
         this.updateInput = this.updateInput.bind(this);
     }
-    async deleteUsers() {
-        try {
-            await AsyncStorage.removeItem(USERS_DATA)
-            alert(' was successful!');
-        } catch (error) {
-            alert('something went  wrong' + error);
-        }
-    }
+
 
     async componentDidMount() {
         try {
@@ -30,25 +24,48 @@ class addUserComponent extends PureComponent {
                     userData: JSON.parse(dataRequest)
                 })
             }
+
         } catch (error) {
-            alert('something wrong')
+            alert('something wrong' + error)
         }
-    }
-    async storeData(userDataStore) {
-
-        const userStorage = this.state.userData
-        userStorage.push(userDataStore)
-        AsyncStorage.setItem(USERS_DATA, JSON.stringify(userStorage))
-            .then(() => this.props.history.goBack()
-            )
-        this.setState({
-            userData: userStorage,
+        const idi = this.props.match.params.id;
+        const findI = this.state.userData.findIndex(item => {
+            return item.id === idi
         })
-    }
+        const chosenUser = this.state.userData[findI]
+        this.setState({
+            index: findI,
+            name: chosenUser.name,
+            phoneNumber: chosenUser.phoneNumber,
+            email: chosenUser.email
+        })
 
+    }
+    userUpdate = () => {
+
+        const userDataStore = {
+            id: this.state.id,
+            name: this.state.name,
+            phoneNumber: this.state.phoneNumber,
+            email: this.state.email
+        }
+        const findII = this.state.index
+        const useDataRaw = [
+            ...this.state.userData.slice(0, findII),
+            userDataStore,
+            ...this.state.userData.slice(findII + 1)
+        ]
+
+        AsyncStorage.setItem(USERS_DATA, JSON.stringify(useDataRaw));
+        this.setState({
+            userData: useDataRaw
+        })
+
+        alert('User successfully updated!')
+        this.props.history.goBack();
+    }
 
     updateInput(event) {
-
         this.setState({
             [event.target.name]: event.target.value,
         });
@@ -57,28 +74,22 @@ class addUserComponent extends PureComponent {
     _onClick = () => {
         this.props.history.goBack();
     }
-    onSubmit = () => {
-        const userDataStore = {
-            id: uuid(),
-            name: this.state.name,
-            phoneNumber: this.state.phoneNumber,
-            email: this.state.email
-        }
-        this.storeData(userDataStore);
-    }
+
     render() {
         return (
             <div style={{ padding: 10, flex: 1 }}>
                 <h1><span class="badge badge-secondary">Simple React CRUD </span></h1>
+
                 <div className="card">
                     <div className="card-header">
                         <button type="button" onClick={this._onClick.bind(this)} className="btn btn-danger">
-                            Go back                        </button>
+                            Go back
+                                    </button>
 
                     </div>
 
                     <div className="card-body">
-                        <h5 className="card-title">Add new user</h5>
+                        <h5 className="card-title">Update user</h5>
                         <form>
                             <div className="input-group mb-3">
 
@@ -99,7 +110,7 @@ class addUserComponent extends PureComponent {
                                 </div>
                                 <input type="tel" name="phoneNumber" value={this.state.phoneNumber} onChange={this.updateInput} className="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" />
                             </div>
-                            <button onClick={this.onSubmit} type="button" className="btn btn-success" >Submit</button>
+                            <button onClick={this.userUpdate} type="button" className="btn btn-success" >Update</button>
                         </form>
                     </div>
                 </div>

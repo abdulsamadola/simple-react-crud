@@ -2,6 +2,7 @@ import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import Home from './home'
 import AddUser from './adduser'
+import EditUser from './edit'
 //import Schedule from './Schedule'
 
 // The Main component renders one of the three provided
@@ -14,6 +15,7 @@ const Main = () => (
         <Switch>
             <Route exact path='/' component={Home} />
             <Route path='/adduser' component={AddUser} />
+            <Route path='/edit/:id' component={EditUser} />
         </Switch>
     </main>
 )
