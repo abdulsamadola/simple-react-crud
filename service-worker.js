@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/360campstore/simple-react-crud/precache-manifest.a0319237fd21f5d670e19c40d898269a.js"
+  "/360campstore/simple-react-crud/precache-manifest.7db5dc19d760d48fa987baa8cbec2480.js"
 );
 
 workbox.clientsClaim();
